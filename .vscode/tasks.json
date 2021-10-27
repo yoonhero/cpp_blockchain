@@ -9,7 +9,11 @@
               "-g",
               "${file}",
               "-o",
-              "${fileDirname}/${fileBasenameNoExtension}"
+              "${fileDirname}/${fileBasenameNoExtension}",
+              "-I/usr/local/opt/openssl/include",
+              "-L/usr/local/opt/openssl/lib",
+              "-lssl",
+              "-lcrypto"
           ],
           "options": {
               "cwd": "${workspaceRoot}"

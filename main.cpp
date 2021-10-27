@@ -1,7 +1,12 @@
 #include <iostream>
 #include <vector>
+#include <openssl/sha.h>
+#include <ctime>
+#include <string>
 
 using namespace std;
+
+string sha256(const string str);
 
 class Block
 {
@@ -16,6 +21,24 @@ public:
 
   void mine()
   {
+    string target = "0" * TargetDifficulty;
+    Nonce = 1;
+    string newHash;
+    do
+    {
+      newHash = sha256(PrevHash + to_string(Nonce) + to_string(Timestamp));
+      time_t t = time(0);
+      Timestamp = t;
+      if (newHash [0:TargetDifficulty] == target)
+      {
+        Hash = newHash;
+        break;
+      }
+      else
+      {
+        Nonce++;
+      }
+    } while (newHash [0:TargetDifficulty] != target)
   }
 
   // constructor function - Generate Block
@@ -61,4 +84,19 @@ int main()
   cout << "successful create block" << endl;
 
   return 0;
+}
+
+string sha256(const string str)
+{
+  unsigned char hash[SHA256_DIGEST_LENGTH];
+  SHA256_CTX sha256;
+  SHA256_Init(&sha256);
+  SHA256_Update(&sha256, str.c_str(), str.size());
+  SHA256_Final(hash, &sha256);
+  stringstream ss;
+  for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+  {
+    ss << hex << setw(2) << setfill('0') << (int)hash[i];
+  }
+  return ss.str();
 }
