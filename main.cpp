@@ -6,8 +6,6 @@
 
 using namespace std;
 
-string sha256(const string str);
-
 class Block
 {
 private:
@@ -21,35 +19,40 @@ public:
 
   void mine()
   {
-    string target = "0" * TargetDifficulty;
+    string target = string(TargetDifficulty, '0');
     Nonce = 1;
     string newHash;
     do
     {
-      newHash = sha256(PrevHash + to_string(Nonce) + to_string(Timestamp));
+      newHash = PrevHash + to_string(Nonce) + to_string(Timestamp);
+      cout << Nonce << "th mining ... "
+           << " target: " << target << " hash: " << newHash << endl;
       time_t t = time(0);
       Timestamp = t;
-      if (newHash [0:TargetDifficulty] == target)
+      if (newHash.substr(0, TargetDifficulty) == target)
       {
         Hash = newHash;
+        cout << "Mine Finish..." << endl;
         break;
       }
       else
       {
         Nonce++;
       }
-    } while (newHash [0:TargetDifficulty] != target)
+    } while (newHash.substr(0, TargetDifficulty) != target);
   }
 
   // constructor function - Generate Block
-  Block(string aPrevHash, int aIndex, int aTargetDiff)
-  {
-    PrevHash = aPrevHash;
-    index = aIndex;
-    TargetDifficulty = aTargetDiff;
-    mine();
-  };
+  Block(string aPrevHash, int aIndex, int aTargetDiff);
 };
+
+Block::Block(string aPrevHash, int aIndex, int aTargetDiff)
+{
+  PrevHash = aPrevHash;
+  index = aIndex;
+  TargetDifficulty = aTargetDiff;
+  mine();
+}
 
 class Blockchain
 {
@@ -65,38 +68,40 @@ public:
     CurrentDifficulty = aDifficulty;
   }
 
-  Blockchain()
-  {
-    Height = 0;
-    NewestHash = "";
-    CurrentDifficulty = 3;
-  };
+  Blockchain();
 };
+
+Blockchain::Blockchain()
+{
+  Height = 0;
+  NewestHash = "";
+  CurrentDifficulty = 3;
+}
 
 int main()
 {
-  Block blocks[10] = {} Blockchain Blockchain;
-  Block NewBlock(Blockchain.NewestHash, Blockchain.Height);
+  // Block blocks[10];
+  Blockchain Blockchain;
+  Block NewBlock(Blockchain.NewestHash, Blockchain.Height, Blockchain.CurrentDifficulty);
 
-  Blockchain.updateBlockchain(NewBlock.Hash, NewBlock.Difficulty);
-  blocks[Blockchain.Height] = NewBlock;
+  Blockchain.UpdateBlockchain(NewBlock.Hash, NewBlock.Difficulty);
+  // blocks[Blockchain.Height] = NewBlock;
 
   cout << "successful create block" << endl;
 
   return 0;
 }
 
-string sha256(const string str)
-{
-  unsigned char hash[SHA256_DIGEST_LENGTH];
-  SHA256_CTX sha256;
-  SHA256_Init(&sha256);
-  SHA256_Update(&sha256, str.c_str(), str.size());
-  SHA256_Final(hash, &sha256);
-  stringstream ss;
-  for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-  {
-    ss << hex << setw(2) << setfill('0') << (int)hash[i];
-  }
-  return ss.str();
-}
+// string sha256(char string[])
+// {
+//   unsigned char digest[SHA256_DIGEST_LENGTH];
+
+//   SHA256((unsigned char *)&string, strlen(string), (unsigned char *)&digest);
+
+//   char mdString[SHA256_DIGEST_LENGTH * 2 + 1];
+
+//   for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+//     sprintf(&mdString[i * 2], "%02x", (unsigned int)digest[i]);
+
+//   return mdString;
+// }

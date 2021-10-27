@@ -3,7 +3,11 @@
     "*.html": "html",
     "*.js": "javascript",
     "*.gohtml": "gohtml",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "ostream": "cpp",
+    "vector": "cpp",
+    "ctime": "cpp",
+    "string": "cpp"
   },
   "C_Cpp.errorSquiggles": "Disabled"
 }
