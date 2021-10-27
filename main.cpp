@@ -24,7 +24,27 @@ public:
     string newHash;
     do
     {
-      newHash = PrevHash + to_string(Nonce) + to_string(Timestamp);
+      string str = PrevHash + to_string(Nonce) + to_string(Timestamp);
+      int n = str.length();
+
+      // declaring character array
+      char string[n + 1];
+
+      // copying the contents of the
+      // string to char array
+      strcpy(string, str.c_str());
+
+      unsigned char digest[SHA256_DIGEST_LENGTH];
+
+      SHA256((unsigned char *)&string, strlen(string), (unsigned char *)&digest);
+
+      char mdString[SHA256_DIGEST_LENGTH * 2 + 1];
+
+      for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        sprintf(&mdString[i * 2], "%02x", (unsigned int)digest[i]);
+
+      newHash = mdString;
+
       cout << Nonce << "th mining ... "
            << " target: " << target << " hash: " << newHash << endl;
       time_t t = time(0);
